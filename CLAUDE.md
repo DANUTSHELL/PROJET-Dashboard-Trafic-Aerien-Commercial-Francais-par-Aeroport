@@ -4,9 +4,11 @@ Consignes pour Claude Code sur ce dépôt.
 
 ## Projet
 
-Tableau de bord Power BI sur le trafic aérien commercial français par aéroport et par liaison depuis 1990 (données DGAC, data.gouv.fr). Projet pédagogique à trois auteurs : @DANUTSHELL, @jules-gillet et @thibault-dlb. Le détail (problématique, cas d'usage, modèle en étoile, points de vigilance) est dans `README.md`.
+Projet BI (IPSA 3IA, 2025-2026) sur le trafic aérien commercial français depuis 1990 (données DGAC, data.gouv.fr) : entrepôt SQL Server, alimentation SSIS, modèle SSAS, tableau de bord Power BI. Projet pédagogique à trois auteurs : @DANUTSHELL, @jules-gillet et @thibault-dlb. Le détail (problématique, cinq cas d'usage, séries retenues, modèle, matrice de bus, grille de décision, limites) est dans `README.md`.
 
-État actuel : seule la documentation existe. L'arborescence prévue (`data/raw`, `data/clean`, `notebooks/`, `dashboard/`, `docs/`) n'est pas encore créée.
+État actuel : seule la documentation existe, avec le dossier `docs/`. Les autres dossiers prévus (`data/raw`, `data/ref`, `sql/`, `ssis/`, `ssas/`, `notebooks/`, `dashboard/`) ne sont pas encore créés.
+
+Contraintes du cours : stack SQL Server / SSIS / SSAS / Power BI imposée ; Power BI doit interroger le modèle en étoile ; au moins quatre cas d'usage ; livrables = support de soutenance PowerPoint et fichier `.pbix` (pas de vidéo). Barème : présentation 5, modélisation 6, nettoyage et enrichissement 4, restitution 5.
 
 ## Règles de commit
 
@@ -19,12 +21,15 @@ Tableau de bord Power BI sur le trafic aérien commercial français par aéropor
 
 - **Emojis interdits** partout : documentation, code, commentaires, messages de commit, descriptions de PR, et réponses dans le terminal.
 - Documentation en français ; toute modification de `README.md` doit être répercutée dans `README.en.md`.
-- `data/raw/` contient les CSV DGAC bruts, jamais modifiés. Les transformations produisent des fichiers dans `data/clean/`.
-- Préparation des données : Python (pandas) ou Power Query. Tableau de bord : Power BI Desktop (`.pbix` dans `dashboard/`).
+- `data/raw/` contient les CSV DGAC bruts, jamais modifiés. Les tables d'enrichissement sont dans `data/ref/`.
+- Noms de tables et de colonnes en français : faits `f_*`, dimensions `d_*`.
+- Python (pandas) sert à l'exploration ; la chaîne de production passe par SSIS.
 
 ## Points de vigilance sur les données
 
-- Vérifier la granularité réelle du CSV (mois × paire d'aéroports × sens) avant de bâtir le modèle.
-- Seuil de publication à 1 UDT : l'absence d'un petit aéroport n'est pas un déclin.
-- Ruptures de série sur 35 ans (codes, périmètres, nomenclatures).
-- Données par sens : dédoublonner avant d'agréger au niveau aéroport.
+- Séries retenues : `ASP_APT` (aéroports), `ASP_LSN` (faisceaux et pays), `ASP_CIE` (compagnies, depuis 2010). `ASP_PAP` est écartée (environ 40 % du trafic, filtrée par secret statistique).
+- CSV : séparateur `;`, décimales à la virgule, UTF-8 avec BOM.
+- Seuils de publication : un aéroport, une liaison ou une compagnie absent n'est pas forcément fermé ou en déclin.
+- APT compte le domestique deux fois (départ et arrivée) : ne jamais additionner APT avec LSN ou CIE.
+- Lignes regroupées à traiter à part : `ZZMT`, `ZZOM`, « AUTRES CIE », pays `*_AUTRE`.
+- Entités multiples d'une même compagnie (easyJet UK, Europe, Switzerland) à regrouper.
