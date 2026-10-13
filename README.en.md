@@ -1,4 +1,4 @@
-# ✈️ French Commercial Air Traffic by Airport
+# French Commercial Air Traffic by Airport
 
 **Project 2 — Data visualisation dashboard**
 
@@ -6,13 +6,13 @@
 
 ---
 
-## 📋 The question
+## The question
 
 French air traffic has been through three decades of upheaval: liberalisation of European skies, the rise of low-cost carriers, high-speed rail competition on domestic routes, and the collapse and recovery around the health crisis.
 
 This project builds a dashboard that **measures those dynamics airport by airport and route by route**, and identifies which platforms are growing and which are declining.
 
-## 🎯 Use cases
+## Use cases
 
 | # | Use case | What it shows |
 |---|---|---|
@@ -21,7 +21,7 @@ This project builds a dashboard that **measures those dynamics airport by airpor
 | 3 | **Post-pandemic recovery by region** | Speed of return to 2019 levels, and gaps between territories |
 | 4 | **Seasonality comparison** | Monthly profiles of regional airports against the Paris hubs |
 
-## 📊 Data
+## Data
 
 | Item | Detail |
 |---|---|
@@ -39,7 +39,7 @@ This project builds a dashboard that **measures those dynamics airport by airpor
 - `ASP_LSN_AAAA` — traffic by route bundle and connection, by country
 - `ASP_CIE_AAAA` — traffic by airline (since 2010, 10 UDT threshold)
 
-## 🧱 Data model
+## Data model
 
 Star schema, with a fact table at the grain of **month × airport pair × direction**.
 
@@ -84,14 +84,14 @@ erDiagram
 
 > `d_origin_airport` and `d_destination_airport` are two **roles of the same airport dimension**: implement as a role-playing dimension (Power BI) or as a double join onto a single table.
 
-## ⚠️ Limitations and watch-outs
+## Limitations and watch-outs
 
 - **Check the grain first.** Some DGAC datasets are published **already aggregated**. Before building the model, confirm the CSV really goes down to month × airport pair — otherwise use cases 1 and 4 (seasonality) collapse.
 - **Publication threshold.** Monthly figures are only broken down for aerodromes reaching at least **one traffic unit (UDT)** — one thousand passengers, or one hundred kilograms of freight or mail. Small aerodromes are therefore missing or aggregated: state this in the analysis, or risk reading a publication threshold as a "decline".
 - **Series breaks.** Over thirty-five years, airport codes, scopes and classifications change. Verify continuity before any 1990 ↔ today comparison.
 - **Directional flows.** The data is per direction: watch for double counting when aggregating to airport level without deduplicating.
 
-## 🛠️ Tech stack
+## Tech stack
 
 | Purpose | Tool |
 |---|---|
@@ -99,9 +99,9 @@ erDiagram
 | Data preparation | Power Query / Python (pandas) |
 | Sources | DGAC CSV files versioned under `data/` |
 
-## 🗂️ Repository structure
+## Repository structure
 
-> ⚠️ **Planned** structure — the repository is still being set up.
+> **Planned** structure — the repository is still being set up.
 
 ```
 .
@@ -114,7 +114,7 @@ erDiagram
 └── README.md
 ```
 
-## 🚀 Getting started
+## Getting started
 
 1. **Clone the repository**
    ```bash
@@ -128,9 +128,9 @@ erDiagram
 
 4. **Open the dashboard**: the `.pbix` under `dashboard/` with Power BI Desktop.
 
-> 💡 The raw CSVs are large. If the repository approaches GitHub's limits, add `data/raw/` to `.gitignore` and document the download link instead.
+> The raw CSVs are large. If the repository approaches GitHub's limits, add `data/raw/` to `.gitignore` and document the download link instead.
 
-## 🗺️ Roadmap
+## Roadmap
 
 - [ ] Download the dataset and verify the actual grain
 - [ ] Document the data dictionary
@@ -140,17 +140,17 @@ erDiagram
 - [ ] Write up the analysis and findings
 - [ ] Prepare the presentation deck
 
-## 👥 Authors
+## Authors
 
 - [@DANUTSHELL](https://github.com/DANUTSHELL)
 - [@jules-gillet](https://github.com/jules-gillet)
 - [@thibault-dlb](https://github.com/thibault-dlb)
 
-## 📄 Licence
+## Licence
 
 Code for educational use.
 Data published by the DGAC under the **Licence Ouverte / Open Licence (Etalab)**, to be credited accordingly.
 
 ---
 
-🇫🇷 Une version française de ce README est disponible dans [README.md](README.md).
+Une version française de ce README est disponible dans [README.md](README.md).
