@@ -213,7 +213,7 @@ graph LR
     CSV[DGAC CSV files<br/>and reference tables] -->|SSIS| STG[Raw tables<br/>stg_*]
     STG -->|SSIS: cleaning,<br/>enrichment| DW[Star-schema warehouse<br/>d_* and f_*]
     DW --> CUBE[OLAP cube<br/>SSAS]
-    CUBE --> PBI[Power BI<br/>published on the school server]
+    CUBE --> PBI[Power BI Desktop<br/>local demo]
 ```
 
 | Step | Tool | Content |
@@ -221,7 +221,7 @@ graph LR
 | Database | SQL Server (SSMS) | Creating the database, raw `stg_*` tables, dimensions and facts |
 | Loading (ETL) | SSIS | Loading raw CSV files, cleaning, enrichment, populating dimensions then facts; packages deployed in SSMS |
 | Analytical model | SSAS | Multidimensional project: OLAP cube built on the star schema, with its hierarchies |
-| Reporting | Power BI Desktop | Connection to the SSAS cube, visuals per use case, publication on the school server |
+| Reporting | Power BI Desktop | Connection to the SSAS cube, visuals per use case; the whole chain runs locally |
 | Exploration | Python (pandas) | Data profiling and quality checks, outside the production pipeline |
 
 ### Quality checks
@@ -270,7 +270,7 @@ Only `docs/` exists so far; the other folders will be created as the project pro
   - cleaning steps;
   - Power BI visuals;
   - lessons learned: achievements, difficulties, possible extensions.
-- **Dashboard**: `.pbix` file, connected to the SSAS cube and published on the school server.
+- **Dashboard**: `.pbix` file, connected to the SSAS cube, shown in a local demo.
 
 ## Roadmap
 
@@ -285,7 +285,7 @@ Each step is detailed (tasks, acceptance criteria, mapping to the grading grid, 
 - [ ] Create the SSAS project, then build and deploy the OLAP cube
 - [ ] Check that the cube schema matches the star schema
 - [ ] Connect Power BI to the cube and build the visuals, batch 1 then batch 2
-- [ ] Publish the report on the school server
+- [ ] Prepare the local demo of the report
 - [ ] Prepare the presentation
 
 ## Authors

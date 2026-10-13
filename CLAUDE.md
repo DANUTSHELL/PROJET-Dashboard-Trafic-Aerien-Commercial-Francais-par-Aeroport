@@ -10,7 +10,7 @@ Projet BI (IPSA 3IA, 2025-2026) sur le trafic aérien commercial français depui
 
 Contraintes du cours (supports dans `C:\Users\thibd\OneDrive\Cours\B3\Systèmes d'aide à la décision + projet`, grille détaillée dans `Projet/notation_projet.pdf`) :
 
-- Chaîne imposée : CSV bruts chargés par SSIS dans SQL Server, tables de dimensions et de faits créées dans SSMS, packages SSIS déployés dans SSMS, cube OLAP SSAS (projet multidimensionnel) construit sur l'étoile, Power BI connecté au cube SSAS et publié sur le serveur de l'école.
+- Chaîne imposée : CSV bruts chargés par SSIS dans SQL Server, tables de dimensions et de faits créées dans SSMS, packages SSIS déployés dans SSMS, cube OLAP SSAS (projet multidimensionnel) construit sur l'étoile, Power BI connecté au cube SSAS. Toute la chaîne tourne en local (SQL Server sur chaque poste) et la démonstration se fait en local, sans publication sur le serveur de l'école.
 - Au moins quatre cas d'usage, chacun avec des visuels.
 - Vocabulaire du cours : « matrice de bus décisionnel » (processus métiers en lignes, dimensions en colonnes), « grille de priorisation » (valeur métier × facilité), clés de substitution numériques sans signification, pseudo-entités, dimensions à évolution lente.
 - Livrables : support de soutenance PowerPoint (avec membres et répartition du travail) et fichier `.pbix` ; pas de vidéo.

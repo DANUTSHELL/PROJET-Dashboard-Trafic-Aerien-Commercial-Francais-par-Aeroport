@@ -46,7 +46,7 @@ graph TD
 | 4 | Packages SSIS de chargement et d'alimentation, déploiement | 2, 3 | |
 | 5 | Requêtes de contrôle et recoupements | 4 | |
 | 6 | Projet SSAS, cube, mesures calculées, déploiement | 5 | |
-| 7 | Rapport Power BI connecté au cube, publication | 6 | |
+| 7 | Rapport Power BI connecté au cube, démonstration locale | 6 | |
 | 8 | Support de soutenance | 7 | |
 | 9 | README, retour d'expérience, livraison | 8 | |
 
@@ -70,7 +70,7 @@ Les phases 2 et 3 peuvent avancer en parallèle. Dès que la phase 4 charge une 
 | Vérification du schéma du cube avec le modèle en étoile | 1 | 6.7 |
 | Connexion à une base SSAS (OLAP) | 1 | 7.1 |
 | Visuels pertinents pour chaque cas d'usage (au moins 4) | 3 | 7.3 à 7.7 |
-| Déploiement de Power BI sur le serveur de l'école | 1 | 7.9 |
+| Déploiement de Power BI sur le serveur de l'école (remplacé par une démonstration locale, à confirmer avec l'enseignant) | 1 | 7.9 |
 
 ---
 
@@ -82,7 +82,7 @@ Les phases 2 et 3 peuvent avancer en parallèle. Dès que la phase 4 charge une 
 - [ ] Lui demander de confirmer trois points :
   - [ ] le barème qui s'applique (5/6/4/5 dans les consignes, 5/5/5/5 dans la grille de notation) ;
   - [ ] le type de projet SSAS attendu (multidimensionnel, puisque la grille parle de cube OLAP, ou tabulaire) ;
-  - [ ] le serveur de l'école pour la publication Power BI : adresse, type (Power BI Report Server ou autre), version de Power BI Desktop à utiliser, droits d'accès.
+  - [ ] l'acceptation d'une démonstration en local à la place de la publication sur le serveur de l'école (critère noté 1 point).
 - [ ] Noter la réponse et la date dans `docs/`.
 
 Critère de validation : sujet accepté par écrit.
@@ -108,7 +108,9 @@ Sur chaque poste qui développe :
 - [ ] **SQL Server** (édition Developer, gratuite) avec les services Database Engine, Integration Services et Analysis Services en **mode multidimensionnel**. Le mode d'Analysis Services se choisit à l'installation : vérifier avant de valider.
 - [ ] **SQL Server Management Studio (SSMS)**.
 - [ ] **Visual Studio** (Community suffit) avec les extensions **SQL Server Integration Services Projects** et **Microsoft Analysis Services Projects**.
-- [ ] **Power BI Desktop**, dans la version compatible avec le serveur de l'école si c'est un Power BI Report Server (version « optimisée pour Report Server »).
+- [ ] **Power BI Desktop** (version standard).
+
+Toute la chaîne tourne en local sur chaque poste : chaque membre recrée la base depuis les scripts `sql/` et les packages SSIS du dépôt, sans échanger de fichiers de base.
 - [ ] **Python** avec pandas, pour l'exploration seulement.
 - [ ] Activer le hook du dépôt : `git config core.hooksPath .githooks`.
 
@@ -540,14 +542,16 @@ Question : quelles compagnies captent la croissance ?
 - [ ] Courbes : Air France contre easyJet, Ryanair, Transavia, Volotea.
 - [ ] Carte : part du low-cost par pays de rattachement des compagnies.
 
-### 7.9 Publier sur le serveur de l'école
+### 7.9 Préparer la démonstration locale
 
-- [ ] Obtenir l'adresse du serveur et les droits (voir 0.1).
-- [ ] Vérifier que le serveur accède au cube SSAS (même réseau ou source de données configurée côté serveur).
-- [ ] Publier le rapport ; configurer la source de données et les identifiants sur le serveur.
-- [ ] Tester l'affichage depuis un autre poste et un autre compte.
+La démonstration se fait en local : SQL Server, le cube SSAS et Power BI Desktop tournent sur le poste qui présente.
 
-Critère de validation : le rapport s'ouvre depuis le serveur de l'école. Capture pour la soutenance (critère noté).
+- [ ] Choisir le poste de démonstration ; y recharger la base et retraiter le cube la veille.
+- [ ] Vérifier que le `.pbix` se connecte au cube local (`localhost`) et que toutes les pages s'affichent.
+- [ ] Préparer un scénario de démonstration : un parcours par cas d'usage, filtres et exploration.
+- [ ] Garder des captures de chaque page en secours.
+
+Critère de validation : démonstration complète répétée sur le poste de soutenance.
 
 ### 7.10 Relecture du rapport
 
@@ -586,7 +590,7 @@ Critère de validation : le rapport s'ouvre depuis le serveur de l'école. Captu
 | 14 | Cube OLAP | Dimensions, hiérarchies, groupes de mesures, utilisation des dimensions | Méthode |
 | 15 | Contrôles de qualité | Totaux comparés, recoupement DGAC | Méthode |
 | 16 à 20 | Un cas d'usage par diapositive | Question, visuel clé, conclusion | Visuels Power BI |
-| 21 | Démonstration | Rapport publié sur le serveur de l'école | Visuels Power BI |
+| 21 | Démonstration | Rapport en local, connecté au cube | Visuels Power BI |
 | 22 | Retour d'expérience | Réalisations notables, difficultés, extensions possibles | |
 | 23 | Questions | | |
 
@@ -620,7 +624,7 @@ Tenir dès le début un journal dans `docs/journal.md` (date, problème, solutio
 | Risque | Conséquence | Parade |
 |---|---|---|
 | Analysis Services installé en mode tabulaire | Impossible de créer un cube multidimensionnel | Choisir le mode multidimensionnel à l'installation ; sinon réinstaller l'instance |
-| Serveur de l'école inaccessible ou de version différente | Publication impossible | Clarifier en 0.1 ; garder des captures de secours |
+| Panne du poste de démonstration | Démonstration impossible | Préparer un second poste ; garder des captures de secours |
 | Power BI ne peut pas créer de mesures en connexion active | Ratios manquants | Les définir en MDX dans le cube (6.5) |
 | Classification manuelle des compagnies trop longue | Cas d'usage 5 retardé | Classer d'abord les 30 plus grandes (environ 65 % du trafic) ; le reste en « Non classée » |
 | Libellés de pays différents entre LSN et CIE | Dimension pays en double | Table de correspondance dans `ref_pays.csv` |
