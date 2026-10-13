@@ -274,6 +274,8 @@ Seul `docs/` existe pour l'instant ; les autres dossiers seront créés au fil d
 
 ## Feuille de route
 
+Le détail de chaque étape (tâches, critères de validation, correspondance avec la grille de notation, valeurs de contrôle) est dans [docs/feuille-de-route.md](docs/feuille-de-route.md).
+
 - [ ] Faire valider la thématique par l'enseignant
 - [ ] Documenter le dictionnaire des variables à partir des notices DGAC
 - [ ] Construire les tables d'enrichissement (`data/ref/`)
