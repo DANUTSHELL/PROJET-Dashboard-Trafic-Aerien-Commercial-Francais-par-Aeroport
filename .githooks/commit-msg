@@ -1,0 +1,6 @@
+#!/bin/sh
+# Refuse tout commit dont le message contient une ligne Co-Authored-By.
+if grep -qi 'co-authored-by' "$1"; then
+  echo "Commit refusé : les lignes 'Co-Authored-By' sont interdites dans ce dépôt (cf. CLAUDE.md)." >&2
+  exit 1
+fi
