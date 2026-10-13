@@ -4,7 +4,7 @@ Consignes pour Claude Code sur ce dépôt.
 
 ## Projet
 
-Tableau de bord Power BI sur le trafic aérien commercial français par aéroport et par liaison depuis 1990 (données DGAC, data.gouv.fr). Projet pédagogique à deux auteurs : @DANUTSHELL et @jules-gillet. Le détail (problématique, cas d'usage, modèle en étoile, points de vigilance) est dans `README.md`.
+Tableau de bord Power BI sur le trafic aérien commercial français par aéroport et par liaison depuis 1990 (données DGAC, data.gouv.fr). Projet pédagogique à trois auteurs : @DANUTSHELL, @jules-gillet et @thibault-dlb. Le détail (problématique, cas d'usage, modèle en étoile, points de vigilance) est dans `README.md`.
 
 État actuel : seule la documentation existe. L'arborescence prévue (`data/raw`, `data/clean`, `notebooks/`, `dashboard/`, `docs/`) n'est pas encore créée.
 
