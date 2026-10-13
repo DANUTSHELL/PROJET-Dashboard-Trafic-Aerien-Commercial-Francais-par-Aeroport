@@ -1,4 +1,4 @@
-# ✈️ Trafic aérien commercial français par aéroport
+# Trafic aérien commercial français par aéroport
 
 **Projet 2 — Tableau de bord de data visualisation**
 
@@ -6,13 +6,13 @@
 
 ---
 
-## 📋 Problématique
+## Problématique
 
 Le trafic aérien français a connu trois décennies de transformations : libéralisation du ciel européen, montée du low-cost, concurrence du TGV sur le domestique, effondrement puis reprise post-crise sanitaire.
 
 Ce projet construit un tableau de bord permettant de **mesurer ces dynamiques aéroport par aéroport et liaison par liaison**, et d'identifier les plateformes en croissance comme celles en déclin.
 
-## 🎯 Cas d'usage
+## Cas d'usage
 
 | # | Cas d'usage | Ce qu'on cherche à montrer |
 |---|---|---|
@@ -21,7 +21,7 @@ Ce projet construit un tableau de bord permettant de **mesurer ces dynamiques a�
 | 3 | **Reprise post-crise sanitaire par région** | Vitesse de retour au niveau 2019, et écarts entre territoires |
 | 4 | **Comparaison saisonnière** | Profils mensuels des aéroports régionaux face aux hubs parisiens |
 
-## 📊 Données
+## Données
 
 | Élément | Détail |
 |---|---|
@@ -39,7 +39,7 @@ Ce projet construit un tableau de bord permettant de **mesurer ces dynamiques a�
 - `ASP_LSN_AAAA` — trafic par faisceau et liaison, par pays
 - `ASP_CIE_AAAA` — trafic par compagnie aérienne (depuis 2010, seuil de 10 UDT)
 
-## 🧱 Modèle de données
+## Modèle de données
 
 Modèle en étoile, une table de faits au grain **mois × paire d'aéroports × sens**.
 
@@ -84,14 +84,14 @@ erDiagram
 
 > `d_aeroport_origine` et `d_aeroport_destination` sont deux **rôles de la même dimension aéroport** : à implémenter en role-playing dimension (Power BI) ou en double jointure sur une table unique.
 
-## ⚠️ Limites et points de vigilance
+## Limites et points de vigilance
 
 - **Granularité à vérifier en priorité.** Certains jeux DGAC sont publiés **déjà agrégés**. Avant de bâtir le modèle, confirmer que le CSV descend bien au mois × paire d'aéroports — sinon les cas d'usage 1 et 4 (saisonnalité) tombent.
 - **Seuil de publication.** Les résultats mensuels ne sont détaillés que pour les aérodromes atteignant au moins **une unité de trafic (UDT)** — mille passagers, ou cent kilogrammes de fret ou de poste. Les petits aérodromes sont donc absents ou agrégés : à signaler dans l'analyse, sous peine de conclure à tort à un « déclin ».
 - **Ruptures de série.** Sur trente-cinq ans, les codes aéroports, les périmètres et les nomenclatures changent. Vérifier la continuité avant toute comparaison 1990 ↔ aujourd'hui.
 - **Sens des flux.** Les données sont par sens : attention au double comptage si l'on agrège au niveau aéroport sans dédoublonner.
 
-## 🛠️ Stack technique
+## Stack technique
 
 | Usage | Outil |
 |---|---|
@@ -99,9 +99,9 @@ erDiagram
 | Préparation des données | Power Query / Python (pandas) |
 | Sources | CSV DGAC versionnés dans `data/` |
 
-## 🗂️ Structure du dépôt
+## Structure du dépôt
 
-> ⚠️ Structure **prévue** — le dépôt est en cours d'initialisation.
+> Structure **prévue** — le dépôt est en cours d'initialisation.
 
 ```
 .
@@ -114,7 +114,7 @@ erDiagram
 └── README.md
 ```
 
-## 🚀 Démarrage
+## Démarrage
 
 1. **Cloner le dépôt**
    ```bash
@@ -128,9 +128,9 @@ erDiagram
 
 4. **Ouvrir le tableau de bord** : le `.pbix` sous `dashboard/` avec Power BI Desktop.
 
-> 💡 Les CSV bruts sont volumineux. Si le dépôt approche les limites GitHub, ajouter `data/raw/` au `.gitignore` et documenter le lien de téléchargement à la place.
+> Les CSV bruts sont volumineux. Si le dépôt approche les limites GitHub, ajouter `data/raw/` au `.gitignore` et documenter le lien de téléchargement à la place.
 
-## 🗺️ Feuille de route
+## Feuille de route
 
 - [ ] Télécharger le jeu de données et vérifier la granularité réelle
 - [ ] Documenter le dictionnaire des variables
@@ -140,17 +140,17 @@ erDiagram
 - [ ] Rédiger l'analyse et les conclusions
 - [ ] Préparer le support de présentation
 
-## 👥 Auteurs
+## Auteurs
 
 - [@DANUTSHELL](https://github.com/DANUTSHELL)
 - [@jules-gillet](https://github.com/jules-gillet)
 - [@thibault-dlb](https://github.com/thibault-dlb)
 
-## 📄 Licence
+## Licence
 
 Code à usage pédagogique.
 Données publiées par la DGAC sous **Licence Ouverte / Open Licence (Etalab)**, à citer comme telles.
 
 ---
 
-🇬🇧 An English version of this README is available in [README.en.md](README.en.md).
+An English version of this README is available in [README.en.md](README.en.md).

@@ -17,6 +17,7 @@ Tableau de bord Power BI sur le trafic aérien commercial français par aéropor
 
 ## Conventions
 
+- **Emojis interdits** partout : documentation, code, commentaires, messages de commit, descriptions de PR, et réponses dans le terminal.
 - Documentation en français ; toute modification de `README.md` doit être répercutée dans `README.en.md`.
 - `data/raw/` contient les CSV DGAC bruts, jamais modifiés. Les transformations produisent des fichiers dans `data/clean/`.
 - Préparation des données : Python (pandas) ou Power Query. Tableau de bord : Power BI Desktop (`.pbix` dans `dashboard/`).
