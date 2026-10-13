@@ -144,6 +144,7 @@ erDiagram
 
 - [@DANUTSHELL](https://github.com/DANUTSHELL)
 - [@jules-gillet](https://github.com/jules-gillet)
+- [@thibault-dlb](https://github.com/thibault-dlb)
 
 ## 📄 Licence
 
