@@ -8,7 +8,13 @@ Projet BI (IPSA 3IA, 2025-2026) sur le trafic aérien commercial français depui
 
 État actuel : seule la documentation existe, avec le dossier `docs/`. Les autres dossiers prévus (`data/raw`, `data/ref`, `sql/`, `ssis/`, `ssas/`, `notebooks/`, `dashboard/`) ne sont pas encore créés.
 
-Contraintes du cours : stack SQL Server / SSIS / SSAS / Power BI imposée ; Power BI doit interroger le modèle en étoile ; au moins quatre cas d'usage ; livrables = support de soutenance PowerPoint et fichier `.pbix` (pas de vidéo). Barème : présentation 5, modélisation 6, nettoyage et enrichissement 4, restitution 5.
+Contraintes du cours (supports dans `C:\Users\thibd\OneDrive\Cours\B3\Systèmes d'aide à la décision + projet`, grille détaillée dans `Projet/notation_projet.pdf`) :
+
+- Chaîne imposée : CSV bruts chargés par SSIS dans SQL Server, tables de dimensions et de faits créées dans SSMS, packages SSIS déployés dans SSMS, cube OLAP SSAS (projet multidimensionnel) construit sur l'étoile, Power BI connecté au cube SSAS et publié sur le serveur de l'école.
+- Au moins quatre cas d'usage, chacun avec des visuels.
+- Vocabulaire du cours : « matrice de bus décisionnel » (processus métiers en lignes, dimensions en colonnes), « grille de priorisation » (valeur métier × facilité), clés de substitution numériques sans signification, pseudo-entités, dimensions à évolution lente.
+- Livrables : support de soutenance PowerPoint (avec membres et répartition du travail) et fichier `.pbix` ; pas de vidéo.
+- Notation sur 20 : présentation 5, base SQL Server et SSIS 5, étoile et cube SSAS 5, tableaux de bord Power BI 5.
 
 ## Règles de commit
 
