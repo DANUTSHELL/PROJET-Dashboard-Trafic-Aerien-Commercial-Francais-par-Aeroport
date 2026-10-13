@@ -213,7 +213,7 @@ graph LR
     CSV[CSV DGAC<br/>et tables de référence] -->|SSIS| STG[Tables brutes<br/>stg_*]
     STG -->|SSIS : nettoyage,<br/>enrichissement| DW[Entrepôt en étoile<br/>d_* et f_*]
     DW --> CUBE[Cube OLAP<br/>SSAS]
-    CUBE --> PBI[Power BI<br/>publié sur le serveur de l'école]
+    CUBE --> PBI[Power BI Desktop<br/>démonstration en local]
 ```
 
 | Étape | Outil | Contenu |
@@ -221,7 +221,7 @@ graph LR
 | Base de données | SQL Server (SSMS) | Création de la base, des tables brutes `stg_*`, des dimensions et des faits |
 | Alimentation (ETL) | SSIS | Chargement des CSV bruts, nettoyage, enrichissement, alimentation des dimensions puis des faits ; packages déployés dans SSMS |
 | Modèle analytique | SSAS | Projet multidimensionnel : cube OLAP construit sur le modèle en étoile, avec ses hiérarchies |
-| Restitution | Power BI Desktop | Connexion au cube SSAS, visuels par cas d'usage, publication sur le serveur de l'école |
+| Restitution | Power BI Desktop | Connexion au cube SSAS, visuels par cas d'usage ; toute la chaîne tourne en local |
 | Exploration | Python (pandas) | Profilage des données et contrôles de qualité, hors chaîne de production |
 
 ### Contrôles de qualité
@@ -270,7 +270,7 @@ Seul `docs/` existe pour l'instant ; les autres dossiers seront créés au fil d
   - étapes de nettoyage ;
   - visuels Power BI ;
   - retour d'expérience : réalisations, difficultés, extensions possibles.
-- **Tableau de bord** : fichier `.pbix`, connecté au cube SSAS et publié sur le serveur de l'école.
+- **Tableau de bord** : fichier `.pbix`, connecté au cube SSAS, présenté en démonstration locale.
 
 ## Feuille de route
 
@@ -285,7 +285,7 @@ Le détail de chaque étape (tâches, critères de validation, correspondance av
 - [ ] Créer le projet SSAS, puis construire et déployer le cube OLAP
 - [ ] Vérifier que le schéma du cube correspond au modèle en étoile
 - [ ] Connecter Power BI au cube et développer les visuels, lot 1 puis lot 2
-- [ ] Publier le rapport sur le serveur de l'école
+- [ ] Préparer la démonstration locale du rapport
 - [ ] Préparer le support de soutenance
 
 ## Auteurs
