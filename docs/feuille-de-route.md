@@ -70,7 +70,7 @@ Les phases 2 et 3 peuvent avancer en parallèle. Dès que la phase 4 charge une 
 | Vérification du schéma du cube avec le modèle en étoile | 1 | 6.7 |
 | Connexion à une base SSAS (OLAP) | 1 | 7.1 |
 | Visuels pertinents pour chaque cas d'usage (au moins 4) | 3 | 7.3 à 7.7 |
-| Déploiement de Power BI sur le serveur de l'école (remplacé par une démonstration locale, à confirmer avec l'enseignant) | 1 | 7.9 |
+| Déploiement de Power BI sur le serveur de l'école (remplacé par une démonstration locale, sur consigne de l'enseignant) | 1 | 7.9 |
 
 ---
 
@@ -79,10 +79,9 @@ Les phases 2 et 3 peuvent avancer en parallèle. Dès que la phase 4 charge une 
 ### 0.1 Faire valider la thématique
 
 - [ ] Envoyer à l'enseignant un résumé d'une demi-page : problématique, cinq cas d'usage, séries DGAC retenues, lien vers le README.
-- [ ] Lui demander de confirmer trois points :
+- [ ] Lui demander de confirmer deux points :
   - [ ] le barème qui s'applique (5/6/4/5 dans les consignes, 5/5/5/5 dans la grille de notation) ;
   - [ ] le type de projet SSAS attendu (multidimensionnel, puisque la grille parle de cube OLAP, ou tabulaire) ;
-  - [ ] l'acceptation d'une démonstration en local à la place de la publication sur le serveur de l'école (critère noté 1 point).
 - [ ] Noter la réponse et la date dans `docs/`.
 
 Critère de validation : sujet accepté par écrit.
