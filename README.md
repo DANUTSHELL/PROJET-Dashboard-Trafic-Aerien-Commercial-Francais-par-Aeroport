@@ -10,7 +10,7 @@
 
 En trente-cinq ans, le transport aérien français a profondément changé : libéralisation du ciel européen, montée des compagnies low-cost, concurrence du TGV sur les liaisons intérieures, effondrement puis reprise après la crise sanitaire.
 
-Ce projet construit un entrepôt de données et un tableau de bord pour **mesurer ces recompositions** : quels aéroports gagnent ou perdent du trafic, quels territoires ont retrouvé leur niveau d'avant-crise, vers quelles destinations partent les passagers, et quelles compagnies captent la croissance.
+Ce projet construit un entrepôt de données, un cube OLAP et un tableau de bord pour **mesurer ces recompositions** : quels aéroports gagnent ou perdent du trafic, quels territoires ont retrouvé leur niveau d'avant-crise, vers quelles destinations partent les passagers, et quelles compagnies captent la croissance.
 
 Les sites existants, comme [PijassBox](https://pijassbox.fr/donnees/aeroport/LFPG/), présentent une fiche par aéroport. Ce projet se concentre au contraire sur la **comparaison** entre aéroports, régions, faisceaux et compagnies.
 
@@ -48,22 +48,38 @@ Les sites existants, comme [PijassBox](https://pijassbox.fr/donnees/aeroport/LFP
 
 La description des champs se trouve dans les notices PDF publiées avec le jeu de données (`Notice_ASP_serie_APT`, `_LSN`, `_CIE`).
 
+## Matrice de bus décisionnel
+
+Chaque série DGAC correspond à un processus métier : le trafic mesuré aux aéroports, le trafic par faisceau et destination, le trafic par compagnie.
+
+| Processus métier | Temps | Aéroport | Faisceau | Pays | Compagnie |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Trafic des aéroports (APT) | X | X | | | |
+| Trafic des liaisons (LSN) | X | | X | X (destination) | |
+| Trafic des compagnies (CIE) | X | | | X (rattachement) | X |
+
+`Temps` est la dimension conforme partagée par les trois processus : elle permet de comparer, sur un même mois, la reprise des aéroports, celle des destinations et celle des compagnies. `Pays` est aussi conforme, avec deux rôles : pays de destination pour les liaisons, pays de rattachement pour les compagnies.
+
+Les séries ne se relient pas plus finement : la DGAC ne publie ni les destinations par aéroport, ni les aéroports par compagnie.
+
 ## Modèle de données
 
-Constellation de trois schémas en étoile, au grain mensuel, qui partagent les dimensions communes.
+Une étoile par processus de la matrice, soit trois tables de faits au grain mensuel qui partagent les dimensions conformes. Conformément au cours, les dimensions ont une clé de substitution numérique sans signification (`id_*`) ; les codes de la DGAC (code OACI, code compagnie) restent des attributs.
 
 ```mermaid
 erDiagram
-    D_TEMPS ||--o{ F_TRAFIC_AEROPORT : "mois"
-    D_TEMPS ||--o{ F_TRAFIC_LIAISON : "mois"
-    D_TEMPS ||--o{ F_TRAFIC_COMPAGNIE : "mois"
-    D_AEROPORT ||--o{ F_TRAFIC_AEROPORT : "aéroport"
-    D_FAISCEAU ||--o{ F_TRAFIC_LIAISON : "faisceau"
+    D_TEMPS ||--o{ F_TRAFIC_AEROPORT : ""
+    D_TEMPS ||--o{ F_TRAFIC_LIAISON : ""
+    D_TEMPS ||--o{ F_TRAFIC_COMPAGNIE : ""
+    D_AEROPORT ||--o{ F_TRAFIC_AEROPORT : ""
+    D_FAISCEAU ||--o{ F_TRAFIC_LIAISON : ""
     D_PAYS ||--o{ F_TRAFIC_LIAISON : "destination"
-    D_PAYS ||--o{ F_TRAFIC_COMPAGNIE : "nationalité"
-    D_COMPAGNIE ||--o{ F_TRAFIC_COMPAGNIE : "compagnie"
+    D_PAYS ||--o{ F_TRAFIC_COMPAGNIE : "rattachement"
+    D_COMPAGNIE ||--o{ F_TRAFIC_COMPAGNIE : ""
 
     F_TRAFIC_AEROPORT {
+        int id_temps FK
+        int id_aeroport FK
         int pax_depart
         int pax_arrivee
         int pax_transit
@@ -73,41 +89,53 @@ erDiagram
         int mvt_cargo
     }
     F_TRAFIC_LIAISON {
+        int id_temps FK
+        int id_faisceau FK
+        int id_pays_destination FK
         int pax
         decimal fret_t
         bigint pax_km
         decimal tonnes_km
     }
     F_TRAFIC_COMPAGNIE {
+        int id_temps FK
+        int id_compagnie FK
+        int id_pays_rattachement FK
         int pax
         decimal fret_t
         int vols
         decimal pax_km
     }
     D_TEMPS {
-        int id_mois
+        int id_temps PK "AAAAMM"
         int annee
-        int mois
         int trimestre
+        int mois
+        string nom_mois "Juillet"
+        string annee_mois "2010-07"
         string periode
     }
     D_AEROPORT {
+        int id_aeroport PK
         string code_oaci
         string nom
-        string zone
-        string region
         string categorie
+        string region
+        string zone
     }
     D_FAISCEAU {
+        int id_faisceau PK
         string code
-        string segment
         string libelle
+        string segment
     }
     D_PAYS {
+        int id_pays PK
         string nom
         string continent
     }
     D_COMPAGNIE {
+        int id_compagnie PK
         string code
         string nom
         string groupe
@@ -115,17 +143,22 @@ erDiagram
     }
 ```
 
-### Matrice de bus
+### Hiérarchies (forage dans le cube)
 
-| Dimension | `f_trafic_aeroport` | `f_trafic_liaison` | `f_trafic_compagnie` |
-|---|:---:|:---:|:---:|
-| `d_temps` | X | X | X |
-| `d_aeroport` | X | | |
-| `d_faisceau` | | X | |
-| `d_pays` | | X (destination) | X (nationalité) |
-| `d_compagnie` | | | X |
+| Dimension | Hiérarchie |
+|---|---|
+| `d_temps` | mois → trimestre → année |
+| `d_aeroport` | aéroport → région → zone (métropole / outre-mer) |
+| `d_faisceau` | faisceau → segment (intérieur / international) |
+| `d_pays` | pays → continent |
+| `d_compagnie` | compagnie → groupe → modèle (low-cost, traditionnelle, régionale, charter) |
 
-`d_temps` est conforme aux trois tables de faits : on peut comparer sur une même période la reprise des aéroports, celle des destinations et celle des compagnies. `d_pays` joue deux rôles : pays de destination pour les liaisons, pays de rattachement pour les compagnies.
+### Choix de modélisation
+
+- **Mesures additives** : passagers, fret, mouvements, vols et passagers-kilomètres s'additionnent sur toutes les dimensions. Les ratios (part de marché, écart à 2019, croissance) ne sont pas stockés : ils sont calculés à la restitution.
+- **Pseudo-membres** : les lignes regroupées de la DGAC (`ZZMT` et `ZZOM` pour les petits aéroports, « AUTRES CIE » pour les petites compagnies, zones `*_AUTRE` pour les petits pays) deviennent des membres « Autres » de leur dimension, pour que les totaux restent justes.
+- **Dimensions à évolution lente** : les noms d'aéroports et de compagnies changent au fil du temps. On conserve la dernière valeur (type 1) : seul le nom affiché change, l'analyse n'en dépend pas.
+- **Table des liaisons** : pour les faisceaux intérieurs, le pays de destination est la France.
 
 ### Enrichissements
 
@@ -133,13 +166,30 @@ Les séries DGAC ne contiennent que des codes et des volumes. Le projet ajoute :
 
 - **Région** de chaque aéroport, et sa **catégorie** (hub parisien, régional, touristique, outre-mer) ;
 - **Continent** de chaque pays ;
-- **Groupe** de chaque compagnie (regroupement des entités easyJet UK, Europe et Switzerland, par exemple) et son **modèle** (low-cost, traditionnelle, régionale, charter) ;
+- **Groupe** de chaque compagnie (regroupement des entités easyJet UK, Europe et Switzerland, par exemple) et son **modèle** ;
 - **Période** de chaque mois (avant-crise, crise sanitaire, reprise) ;
 - **Mises en service des lignes TGV**, pour lire l'évolution des liaisons Paris-province.
 
-## Grille de décision
+## Grille de priorisation
 
-| Question décisionnelle | Indicateurs | Axes d'analyse | Décision éclairée |
+Chaque thème d'analyse est placé selon sa **valeur métier** et sa **facilité de mise en œuvre** ; on commence par les thèmes à forte valeur et faciles à réaliser.
+
+| | Facilité faible | Facilité importante |
+|---|---|---|
+| **Valeur importante** | Low-cost contre compagnies traditionnelles | Gagnants et perdants ; reprise après la crise sanitaire ; destinations et concurrence du TGV |
+| **Valeur faible** | | Saisonnalité |
+
+| Thème | Valeur métier | Facilité | Justification | Lot |
+|---|---|---|---|---|
+| Gagnants et perdants | Importante | Importante | Une seule série (APT), propre depuis 1990 | 1 |
+| Reprise après la crise sanitaire | Importante | Importante | APT et une table aéroport → région à construire | 1 |
+| Destinations et concurrence du TGV | Importante | Importante | LSN est complète ; ajouter les continents et les dates TGV | 1 |
+| Saisonnalité | Faible | Importante | Réutilise l'étoile APT, sans nouvelle donnée | 2 |
+| Low-cost contre compagnies traditionnelles | Importante | Faible | Regrouper les entités et classer environ 140 compagnies à la main ; données depuis 2010 seulement | 2 |
+
+## Questions décisionnelles
+
+| Question | Indicateurs | Axes d'analyse | Décision éclairée |
 |---|---|---|---|
 | Quels aéroports investir ou restructurer ? | Croissance annuelle moyenne, part du trafic national | Aéroport, région, période | Priorisation des investissements d'infrastructure |
 | Quels territoires restent fragiles après la crise ? | Écart au trafic de 2019, mois de retour au niveau de 2019 | Région, aéroport, mois | Soutien ciblé aux plateformes en retard de reprise |
@@ -156,15 +206,27 @@ Les séries DGAC ne contiennent que des codes et des volumes. Le projet ajoute :
 - **Ruptures de série.** Noms d'aéroports, entités de compagnies et zones « autres » évoluent dans le temps : à contrôler pendant le nettoyage.
 - **Pas de ponctualité.** Les séries ne contiennent ni retards ni annulations.
 
-## Stack technique
+## Architecture et stack technique
 
-| Usage | Outil |
-|---|---|
-| Entrepôt de données | SQL Server |
-| Alimentation (ETL) | SSIS |
-| Modèle analytique | SSAS |
-| Tableau de bord | Power BI Desktop, connecté au modèle en étoile |
-| Exploration des données | Python (pandas) |
+```mermaid
+graph LR
+    CSV[CSV DGAC<br/>et tables de référence] -->|SSIS| STG[Tables brutes<br/>stg_*]
+    STG -->|SSIS : nettoyage,<br/>enrichissement| DW[Entrepôt en étoile<br/>d_* et f_*]
+    DW --> CUBE[Cube OLAP<br/>SSAS]
+    CUBE --> PBI[Power BI<br/>publié sur le serveur de l'école]
+```
+
+| Étape | Outil | Contenu |
+|---|---|---|
+| Base de données | SQL Server (SSMS) | Création de la base, des tables brutes `stg_*`, des dimensions et des faits |
+| Alimentation (ETL) | SSIS | Chargement des CSV bruts, nettoyage, enrichissement, alimentation des dimensions puis des faits ; packages déployés dans SSMS |
+| Modèle analytique | SSAS | Projet multidimensionnel : cube OLAP construit sur le modèle en étoile, avec ses hiérarchies |
+| Restitution | Power BI Desktop | Connexion au cube SSAS, visuels par cas d'usage, publication sur le serveur de l'école |
+| Exploration | Python (pandas) | Profilage des données et contrôles de qualité, hors chaîne de production |
+
+### Contrôles de qualité
+
+Pour valider le chargement, on compare les totaux, du général au particulier, entre les CSV bruts, les tables brutes, l'entrepôt et le cube : nombre de lignes, total des passagers par année, puis par mois. Les ordres de grandeur sont recoupés avec les [bulletins statistiques de la DGAC](https://www.ecologie.gouv.fr/politiques-publiques/statistiques-du-trafic-aerien). Les requêtes de contrôle sont conservées dans `sql/`.
 
 ## Structure du dépôt
 
@@ -173,10 +235,10 @@ Les séries DGAC ne contiennent que des codes et des volumes. Le projet ajoute :
 ├── data/
 │   ├── raw/            # CSV DGAC bruts, non modifiés
 │   └── ref/            # Tables d'enrichissement (régions, continents, compagnies, TGV)
-├── sql/                # Création de l'entrepôt : tables, contraintes, vues
-├── ssis/               # Packages d'alimentation
-├── ssas/               # Projet de modèle analytique
-├── notebooks/          # Exploration et contrôles de qualité
+├── sql/                # Création de la base, des tables et requêtes de contrôle
+├── ssis/               # Projet et packages d'alimentation
+├── ssas/               # Projet multidimensionnel (cube OLAP)
+├── notebooks/          # Exploration et profilage des données
 ├── dashboard/          # Fichier .pbix
 ├── docs/               # Support de soutenance, captures, notices DGAC
 └── README.md
@@ -195,24 +257,33 @@ Seul `docs/` existe pour l'instant ; les autres dossiers seront créés au fil d
 
 2. **Télécharger les séries** `ASP_APT_1990_2025.zip`, `ASP_LSN_1990_2025.zip` et `ASP_CIE_2010_2025.zip` depuis [data.gouv.fr](https://www.data.gouv.fr/datasets/trafic-aerien-commercial-mensuel-francais-par-paire-daeroports-par-sens-depuis-1990) et les décompresser dans `data/raw/`.
 
-3. **Créer l'entrepôt** dans SQL Server avec les scripts de `sql/`, puis **l'alimenter** avec les packages de `ssis/`.
+3. **Créer la base** dans SQL Server avec les scripts de `sql/`, puis **déployer et exécuter** les packages de `ssis/`.
 
-4. **Déployer le modèle** de `ssas/`, puis **ouvrir le tableau de bord** `dashboard/*.pbix` dans Power BI Desktop.
+4. **Déployer le cube** du projet `ssas/`, puis **ouvrir le tableau de bord** `dashboard/*.pbix` dans Power BI Desktop, connecté au cube.
 
 ## Livrables
 
-- **Support de soutenance (PowerPoint)** : présentation du jeu de données, objectifs des analyses, matrice de bus, grille de décision, modèle en étoile, étapes de nettoyage, retour d'expérience.
-- **Tableau de bord** : fichier `.pbix`.
+- **Support de soutenance (PowerPoint)** :
+  - présentation générale : contexte, problématique, objectifs, solution, membres du groupe et répartition du travail ;
+  - présentation du jeu de données ;
+  - méthode de mise en œuvre : matrice de bus décisionnel, grille de priorisation, intégration SSIS, modèle en étoile et cube OLAP ;
+  - étapes de nettoyage ;
+  - visuels Power BI ;
+  - retour d'expérience : réalisations, difficultés, extensions possibles.
+- **Tableau de bord** : fichier `.pbix`, connecté au cube SSAS et publié sur le serveur de l'école.
 
 ## Feuille de route
 
 - [ ] Faire valider la thématique par l'enseignant
 - [ ] Documenter le dictionnaire des variables à partir des notices DGAC
 - [ ] Construire les tables d'enrichissement (`data/ref/`)
-- [ ] Créer l'entrepôt dans SQL Server
-- [ ] Développer les packages SSIS : chargement, nettoyage, alimentation des dimensions et des faits
-- [ ] Construire le modèle SSAS
-- [ ] Développer les cinq cas d'usage dans Power BI
+- [ ] Créer la base SQL Server et les tables brutes
+- [ ] Développer les packages SSIS (chargement brut, nettoyage, dimensions, faits) et les déployer dans SSMS
+- [ ] Créer les tables de dimensions et de faits, et vérifier leur cohérence avec la matrice de bus
+- [ ] Créer le projet SSAS, puis construire et déployer le cube OLAP
+- [ ] Vérifier que le schéma du cube correspond au modèle en étoile
+- [ ] Connecter Power BI au cube et développer les visuels, lot 1 puis lot 2
+- [ ] Publier le rapport sur le serveur de l'école
 - [ ] Préparer le support de soutenance
 
 ## Auteurs
