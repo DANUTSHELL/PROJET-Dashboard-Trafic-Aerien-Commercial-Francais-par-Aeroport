@@ -274,6 +274,8 @@ Only `docs/` exists so far; the other folders will be created as the project pro
 
 ## Roadmap
 
+Each step is detailed (tasks, acceptance criteria, mapping to the grading grid, control values) in [docs/feuille-de-route.md](docs/feuille-de-route.md), in French.
+
 - [ ] Get the topic approved by the instructor
 - [ ] Document the data dictionary from the DGAC notices
 - [ ] Build the enrichment tables (`data/ref/`)
