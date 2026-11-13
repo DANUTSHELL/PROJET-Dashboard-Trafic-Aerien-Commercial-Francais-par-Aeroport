@@ -295,9 +295,11 @@ Branches, messages de commit, nommage et contrôles : voir [CONTRIBUTING.md](CON
 
 ## Auteurs
 
-- [@DANUTSHELL](https://github.com/DANUTSHELL)
-- [@jules-gillet](https://github.com/jules-gillet)
-- [@thibault-dlb](https://github.com/thibault-dlb)
+- [@DANUTSHELL](https://github.com/DANUTSHELL) : étoile des aéroports (APT), cas d'usage 1, 2 et 3
+- [@jules-gillet](https://github.com/jules-gillet) : étoile des liaisons (LSN), cas d'usage 4
+- [@thibault-dlb](https://github.com/thibault-dlb) : étoile des compagnies (CIE), cas d'usage 5, assemblage du cube et du rapport
+
+Détail de la répartition : [docs/feuille-de-route.md](docs/feuille-de-route.md), section 0.2.
 
 ## Licence
 

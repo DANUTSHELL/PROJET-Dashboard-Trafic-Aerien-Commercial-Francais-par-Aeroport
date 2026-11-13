@@ -295,9 +295,11 @@ Branches, commit messages, naming and checks are described in [CONTRIBUTING.md](
 
 ## Authors
 
-- [@DANUTSHELL](https://github.com/DANUTSHELL)
-- [@jules-gillet](https://github.com/jules-gillet)
-- [@thibault-dlb](https://github.com/thibault-dlb)
+- [@DANUTSHELL](https://github.com/DANUTSHELL): airport star (APT), use cases 1, 2 and 3
+- [@jules-gillet](https://github.com/jules-gillet): route star (LSN), use case 4
+- [@thibault-dlb](https://github.com/thibault-dlb): airline star (CIE), use case 5, assembly of the cube and the report
+
+Detailed split (in French): [docs/feuille-de-route.md](docs/feuille-de-route.md), section 0.2.
 
 ## Licence
 
