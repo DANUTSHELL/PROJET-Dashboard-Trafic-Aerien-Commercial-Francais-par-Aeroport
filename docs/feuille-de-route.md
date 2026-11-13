@@ -39,16 +39,16 @@ graph TD
 
 | Phase | Contenu | Dépend de | Responsable |
 |---|---|---|---|
-| 0 | Validation du sujet, répartition, installation des outils | | |
-| 1 | Téléchargement, dictionnaire des variables, profilage | 0 | |
-| 2 | Régions, continents, compagnies, lignes TGV, périodes | 1 | |
-| 3 | Base, schémas, tables brutes, dimensions, faits | 1 | |
-| 4 | Packages SSIS de chargement et d'alimentation, déploiement | 2, 3 | |
-| 5 | Requêtes de contrôle et recoupements | 4 | |
-| 6 | Projet SSAS, cube, mesures calculées, déploiement | 5 | |
-| 7 | Rapport Power BI connecté au cube, démonstration locale | 6 | |
-| 8 | Support de soutenance | 7 | |
-| 9 | README, retour d'expérience, livraison | 8 | |
+| 0 | Validation du sujet, répartition, installation des outils | | Tous (socle commun) |
+| 1 | Téléchargement, dictionnaire des variables, profilage | 0 | Chacun sa série (0.2) |
+| 2 | Régions, continents, compagnies, lignes TGV, périodes | 1 | Chacun sa série (0.2) |
+| 3 | Base, schémas, tables brutes, dimensions, faits | 1 | Socle : tous ; puis chacun sa série |
+| 4 | Packages SSIS de chargement et d'alimentation, déploiement | 2, 3 | Chacun sa série (0.2) |
+| 5 | Requêtes de contrôle et recoupements | 4 | Chacun sa série (0.2) |
+| 6 | Projet SSAS, cube, mesures calculées, déploiement | 5 | Chacun sa série ; assemblage : @thibault-dlb |
+| 7 | Rapport Power BI connecté au cube, démonstration locale | 6 | Chacun sa série ; assemblage : @thibault-dlb |
+| 8 | Support de soutenance | 7 | Tous |
+| 9 | README, retour d'expérience, livraison | 8 | Mainteneurs (@DANUTSHELL, @thibault-dlb) |
 
 Les phases 2 et 3 peuvent avancer en parallèle. Dès que la phase 4 charge une première série (APT), on peut commencer un cube et un rapport minimaux pour valider toute la chaîne, puis élargir : c'est l'approche « horizontale » recommandée par le cours.
 
@@ -90,14 +90,29 @@ Critère de validation : sujet accepté par écrit.
 
 La soutenance doit présenter la répartition du travail : la décider tôt et la tenir à jour.
 
-| Domaine | Tâches | Responsable |
-|---|---|---|
-| Données et enrichissement | Phases 1, 2, 5 | |
-| Base et ETL | Phases 3, 4 | |
-| Cube et rapport | Phases 6, 7 | |
-| Soutenance | Phase 8 (tous) | |
+Le travail est découpé par série DGAC et non par phase : chaque membre construit son étoile de bout en bout, du CSV brut aux visuels. Personne n'attend le travail d'un autre pour avancer.
 
-- [ ] Remplir le tableau ci-dessus.
+| | @DANUTSHELL : Aéroports (APT) | @jules-gillet : Liaisons (LSN) | @thibault-dlb : Compagnies (CIE) |
+|---|---|---|---|
+| Données (phase 1) | Notice, dictionnaire et profilage APT | Notice, dictionnaire et profilage LSN | Notice, dictionnaire et profilage CIE |
+| Référentiels (phase 2) | `ref_aeroport.csv` (région, catégorie), règle des périodes | `ref_pays.csv` (continent, correspondance des libellés LSN et CIE), `ref_lignes_tgv.csv` | `ref_compagnie.csv` (groupe, modèle, regroupement easyJet) |
+| Base (phase 3) | `d_temps`, `d_aeroport`, `f_trafic_aeroport` | `d_faisceau`, `d_pays`, `f_trafic_liaison` | `d_compagnie`, `f_trafic_compagnie` |
+| SSIS (phase 4) | Packages APT | Packages LSN | Packages CIE |
+| Contrôles (phase 5) | Contrôles APT | Contrôles LSN | Contrôles CIE |
+| Cube (phase 6) | Dimensions Temps et Aéroport, groupe de mesures APT | Dimensions Faisceau et Pays, groupe de mesures LSN | Dimension Compagnie, groupe de mesures CIE, assemblage du cube final |
+| Power BI (phase 7) | Cas 1, 2 et 3 | Cas 4, page d'accueil, charte graphique | Cas 5, assemblage du `.pbix` final |
+| Soutenance (phase 8) | Son étoile et ses cas d'usage | Son étoile et ses cas d'usage | Son étoile et ses cas d'usage |
+
+Ce qui garantit l'indépendance :
+
+1. **Socle commun, en une séance, tous ensemble, avant de se séparer.** On fige le contrat : scripts SQL de création de la base et de toutes les tables d'après le modèle du README, projets SSIS et SSAS vides avec leur connexion et leur vue de source de données, gabarit Power BI. Ensuite, la table d'un membre ne change que par une pull request qu'il relit.
+2. **`d_temps` ne bloque personne** : sa clé vaut `AAAAMM`, chaque package peut la calculer sans lire la table.
+3. **`d_pays`, partagée entre LSN et CIE**, appartient à @jules-gillet. Grâce au membre « Inconnu » de clé `-1` (3.3), les faits CIE se chargent avant que `d_pays` soit complète ; il suffit de relancer le chargement ensuite.
+4. **Fichiers que Git ne sait pas fusionner** (`.pbix`, `.cube`) : chacun travaille dans ses propres fichiers (ses packages `.dtsx`, ses dimensions `.dim`, un `.pbix` brouillon `dashboard/brouillon_<serie>.pbix`). L'assemblage du cube et du `.pbix` final se fait une seule fois, en fin de projet.
+5. **Nommage par série** : chaque fichier porte le suffixe de sa série (`_apt`, `_lsn`, `_cie`), ce qui dit à qui il appartient.
+
+- [x] Remplir le tableau ci-dessus.
+- [ ] Tenir la séance de socle commun.
 - [ ] Prévoir un point d'avancement par semaine (15 minutes suffisent).
 
 ### 0.3 Installer les outils
@@ -129,7 +144,7 @@ Critère de validation : chaque membre ouvre SSMS, se connecte au moteur et à A
 
 ### 0.6 Conventions de travail
 
-- [ ] Branche `main` uniquement pour l'instant ; commits en français, au format `type: description`.
+- [x] Branches, commits, nommage, contrôles et versions décrits dans `CONTRIBUTING.md` : travail sur des branches issues de `develop`, commits au format `type(portée): description`.
 - [ ] Aucun emoji, aucune ligne `Co-Authored-By`.
 - [ ] Ne jamais versionner de mot de passe ni de chaîne de connexion contenant des identifiants.
 - [ ] Décider si les CSV bruts sont versionnés (environ 4 Mo compressés au total : c'est acceptable) ou seulement documentés.
@@ -629,7 +644,7 @@ Tenir dès le début un journal dans `docs/journal.md` (date, problème, solutio
 | Libellés de pays différents entre LSN et CIE | Dimension pays en double | Table de correspondance dans `ref_pays.csv` |
 | BOM UTF-8 ou virgules décimales mal lus par SSIS | Valeurs fausses ou rejetées | Page de code 65001, conversion explicite, contrôles de la phase 5 |
 | Aéroport absent certaines années | Faux « déclin » | Signaler les seuils dans le rapport ; filtrer sur les aéroports présents toute la période pour les classements |
-| Un membre du groupe indisponible | Retard | Chaque domaine documenté et compris par au moins deux personnes |
+| Un membre du groupe indisponible | Retard | Chaque étoile est indépendante : les deux autres restent livrables ; chaque membre connaît toute la chaîne |
 
 ## Valeurs de référence pour les contrôles
 

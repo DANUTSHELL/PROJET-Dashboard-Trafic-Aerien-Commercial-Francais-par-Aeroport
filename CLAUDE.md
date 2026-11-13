@@ -16,7 +16,28 @@ Contraintes du cours (supports dans `C:\Users\thibd\OneDrive\Cours\B3\Systèmes 
 - Livrables : support de soutenance PowerPoint (avec membres et répartition du travail) et fichier `.pbix` ; pas de vidéo.
 - Notation sur 20 : présentation 5, base SQL Server et SSIS 5, étoile et cube SSAS 5, tableaux de bord Power BI 5.
 
-## Règles de commit
+## Répartition et rôle de l'assistant
+
+Chaque membre travaille avec son propre assistant de code sur sa propre série. Au début de chaque session, identifie l'utilisateur avec `git config user.name` et applique la ligne qui le concerne. Si le nom ne correspond à personne, demande-lui qui il est avant de modifier quoi que ce soit.
+
+| `git config user.name` | Membre | Série | Fichiers dont il est responsable |
+|---|---|---|---|
+| `DANUTSHELL` | @DANUTSHELL | Aéroports (APT), cas 1, 2, 3 | suffixe `_apt`, `ref_aeroport.csv`, `d_temps`, `d_aeroport`, `f_trafic_aeroport` |
+| `Jules GILLET` | @jules-gillet | Liaisons (LSN), cas 4, page d'accueil, charte | suffixe `_lsn`, `ref_pays.csv`, `ref_lignes_tgv.csv`, `d_faisceau`, `d_pays`, `f_trafic_liaison` |
+| `Thibault Tripier de Laubrière` | @thibault-dlb | Compagnies (CIE), cas 5, assemblage final | suffixe `_cie`, `ref_compagnie.csv`, `d_compagnie`, `f_trafic_compagnie`, cube et `.pbix` finaux |
+
+Le tableau complet et les règles d'indépendance sont dans `docs/feuille-de-route.md`, section 0.2.
+
+Consignes pour aider le membre identifié :
+
+- **Rester dans sa série.** Propose et réalise les tâches de sa colonne dans la feuille de route, dans l'ordre des phases, et coche les cases quand le critère de validation est atteint. Pour savoir où il en est, lis la feuille de route et `git log`.
+- **Ne pas toucher aux fichiers d'un autre membre** ni au socle commun (scripts de création des tables partagées). Si un changement y est nécessaire, arrête-toi, explique pourquoi et propose au membre de prévenir le responsable ; la modification passe alors par une pull request relue par ce responsable.
+- **Ne jamais attendre un autre membre.** Si une référence manque (par exemple `d_pays` pour CIE), utilise le membre « Inconnu » de clé `-1` et note le rechargement à faire.
+- **Avant chaque modification** : `git switch develop`, `git pull`, puis une branche `feat/`, `fix/`, `docs/`, `data/` ou `chore/` nommée en anglais avec la série (`feat/fact-table-cie`). Jamais de commit sur `main` ni sur `develop`.
+- **Commits** : un sujet par commit, en français, au format `type(portée): description` (`feat(ssis): ajouter le chargement brut de ASP_CIE`), sans emoji, sans ligne `Co-Authored-By`, sans mention d'un assistant ni d'une IA. Vérifie que le hook est actif : `git config core.hooksPath` doit renvoyer `.githooks`.
+- **Avant la pull request** : lancer les contrôles de la série (`sql/controles/ctl_*_<serie>.sql`) et comparer aux valeurs de référence de la feuille de route. Pousser la branche et donner le lien pour ouvrir la pull request vers `develop`, jamais vers `main`.
+- **Faire comprendre, pas seulement faire.** Le membre devra présenter et justifier son travail à la soutenance : explique chaque choix (grain, clés, pseudo-membres, mesures) avec le vocabulaire du cours, et laisse-le exécuter lui-même dans SSMS, Visual Studio et Power BI ce qui ne se fait pas en ligne de commande.
+
 
 - **Interdit : aucune ligne `Co-Authored-By:`** dans les messages de commit, quelle qu'elle soit. L'assistant ne doit jamais s'ajouter comme co-auteur ni apparaître dans les contributeurs du dépôt.
 - Pas de ligne de signature automatique d'un assistant dans les commits ni dans les descriptions de pull request.
