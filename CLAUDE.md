@@ -21,7 +21,8 @@ Contraintes du cours (supports dans `C:\Users\thibd\OneDrive\Cours\B3\Systèmes 
 - **Interdit : aucune ligne `Co-Authored-By:`** dans les messages de commit, quelle qu'elle soit. L'assistant ne doit jamais s'ajouter comme co-auteur ni apparaître dans les contributeurs du dépôt.
 - Pas de ligne de signature automatique d'un assistant dans les commits ni dans les descriptions de pull request.
 - Le hook `.githooks/commit-msg` rejette tout commit contenant `Co-Authored-By`. Pour l'activer après un clone : `git config core.hooksPath .githooks`.
-- Messages de commit en français, au format `type: description` (`docs:`, `feat:`, `fix:`, `data:`…).
+- Messages de commit en français, au format `type(portée): description`, portée facultative (`docs:`, `feat(ssis):`, `fix(sql):`, `data:`…). Le hook refuse les messages hors format.
+- Branches, pull requests, nommage, contrôles et versions : voir `CONTRIBUTING.md`. Ne jamais commiter directement sur `main` ni sur `develop`.
 
 ## Conventions
 

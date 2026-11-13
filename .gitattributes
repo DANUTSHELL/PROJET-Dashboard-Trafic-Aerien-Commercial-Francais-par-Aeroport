@@ -1,0 +1,3 @@
+# Le hook doit garder des fins de ligne LF pour tourner sous Windows comme sous Linux.
+.githooks/* text eol=lf
+*.sh text eol=lf

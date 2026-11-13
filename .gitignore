@@ -1,0 +1,26 @@
+# Secrets et configuration locale
+.env
+*.env.local
+
+# Visual Studio (projets SSIS et SSAS)
+.vs/
+bin/
+obj/
+*.user
+*.suo
+*.database
+*.deploymentoptions
+*.deploymenttargets
+
+# Power BI : fichiers temporaires (le .pbix est un livrable et reste suivi)
+~$*.pbix
+
+# Python
+__pycache__/
+.ipynb_checkpoints/
+.venv/
+
+# Systèmes
+Thumbs.db
+desktop.ini
+.DS_Store
