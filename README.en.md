@@ -241,6 +241,7 @@ To validate loading, totals are compared from the general to the detailed level 
 ├── notebooks/          # Data exploration and profiling
 ├── dashboard/          # .pbix file
 ├── docs/               # Presentation, screenshots, DGAC notices
+├── CONTRIBUTING.md     # Branches, commits, naming, checks (in French)
 └── README.md
 ```
 
@@ -287,6 +288,10 @@ Each step is detailed (tasks, acceptance criteria, mapping to the grading grid, 
 - [ ] Connect Power BI to the cube and build the visuals, batch 1 then batch 2
 - [ ] Prepare the local demo of the report
 - [ ] Prepare the presentation
+
+## Contributing
+
+Branches, commit messages, naming and checks are described in [CONTRIBUTING.md](CONTRIBUTING.md), in French.
 
 ## Authors
 

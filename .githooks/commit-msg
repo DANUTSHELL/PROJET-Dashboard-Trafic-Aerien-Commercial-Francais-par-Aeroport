@@ -4,3 +4,11 @@ if grep -qi 'co-authored-by' "$1"; then
   echo "Commit refusé : les lignes 'Co-Authored-By' sont interdites dans ce dépôt (cf. CLAUDE.md)." >&2
   exit 1
 fi
+
+# Impose le format Conventional Commits (cf. CONTRIBUTING.md). Fusions et annulations générées par Git acceptées.
+first_line=$(head -n 1 "$1")
+if ! printf '%s\n' "$first_line" | grep -qE '^((feat|fix|docs|data|test|refactor|build|ci|chore)(\([a-z0-9-]+\))?!?: .+|Merge |Revert )'; then
+  echo "Commit refusé : format attendu 'type(portée): description' (cf. CONTRIBUTING.md)." >&2
+  echo "Types : feat, fix, docs, data, test, refactor, build, ci, chore." >&2
+  exit 1
+fi

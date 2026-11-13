@@ -241,6 +241,7 @@ Pour valider le chargement, on compare les totaux, du général au particulier, 
 ├── notebooks/          # Exploration et profilage des données
 ├── dashboard/          # Fichier .pbix
 ├── docs/               # Support de soutenance, captures, notices DGAC
+├── CONTRIBUTING.md     # Branches, commits, nommage, contrôles
 └── README.md
 ```
 
@@ -287,6 +288,10 @@ Le détail de chaque étape (tâches, critères de validation, correspondance av
 - [ ] Connecter Power BI au cube et développer les visuels, lot 1 puis lot 2
 - [ ] Préparer la démonstration locale du rapport
 - [ ] Préparer le support de soutenance
+
+## Contribuer
+
+Branches, messages de commit, nommage et contrôles : voir [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Auteurs
 
